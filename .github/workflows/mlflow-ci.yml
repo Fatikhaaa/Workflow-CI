@@ -26,7 +26,7 @@ jobs:
         pip install mlflow pandas numpy scikit-learn
 
     # ============================
-    # CREATE SQLITE DB FOR MLFLOW
+    # PREPARE SQLITE DB FOR MLFLOW
     # ============================
     - name: Prepare MLflow DB
       run: |
@@ -40,8 +40,8 @@ jobs:
     - name: Run modelling.py
       env:
         MLFLOW_TRACKING_URI: "sqlite:///mlflow.db"
-      run: |
-        python MLProject/modelling.py
+        MLFLOW_ARTIFACT_URI: "./artifacts"
+      run: python MLProject/modelling.py
 
     # ============================
     # GET LATEST RUN_ID FROM DB
@@ -74,7 +74,8 @@ jobs:
       run: |
         mlflow models build-docker \
           --model-uri "runs:/$RUN_ID/model" \
-          --name msml_insurance_model
+          --name msml_insurance_model \
+          --env-manager=local
 
     # ============================
     # PUSH TO DOCKER HUB
