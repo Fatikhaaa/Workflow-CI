@@ -1,4 +1,4 @@
-name: insurance_training
+name: msml_insurance_model
 
 conda_env: conda.yaml
 

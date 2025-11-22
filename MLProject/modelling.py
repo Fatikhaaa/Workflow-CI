@@ -39,4 +39,11 @@ with mlflow.start_run():
     mse = mean_squared_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
 
+    # log metrics
+    mlflow.log_metric("mse", mse)
+    mlflow.log_metric("r2", r2)
+
+    # WAJIB: log model ke MLflow
+    mlflow.sklearn.log_model(model, artifact_path="model")
+
     print("Training success. MSE:", mse, "R2:", r2)
