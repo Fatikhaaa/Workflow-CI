@@ -65,15 +65,12 @@ jobs:
         git commit -m "Update MLflow tracking DB [skip ci]" || echo "No changes"
         git push origin main
 
-    # ============================
-    # BUILD DOCKER IMAGE
-    # ============================
     - name: Build Docker Model
       env:
         RUN_ID: ${{ env.RUN_ID }}
       run: |
         mlflow models build-docker \
-          --model-uri "runs:/$RUN_ID/model" \
+          --model-uri "file:./artifacts/$RUN_ID/model" \
           --name msml_insurance_model \
           --env-manager=local
 
