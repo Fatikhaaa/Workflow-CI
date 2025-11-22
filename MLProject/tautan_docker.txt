@@ -1,0 +1,1 @@
+https://hub.docker.com/repository/registry-1.docker.io/fatikha03/msml_insurance_model/general

@@ -1,0 +1,10 @@
+artifact_location: file:///D:/Bootcamp-Dicoding/proyek/Workflow-CI/mlruns/0/models/m-ba4fb45742ee478eabe336907cf81b93/artifacts
+creation_timestamp: 1763836633911
+experiment_id: '0'
+last_updated_timestamp: 1763836673345
+model_id: m-ba4fb45742ee478eabe336907cf81b93
+model_type: null
+name: model
+source_run_id: 240127d994e9474e8a049afd88bbd382
+status: 2
+status_message: null
