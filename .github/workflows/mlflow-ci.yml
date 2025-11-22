@@ -5,7 +5,7 @@ on:
     branches: ["main"]
 
 permissions:
-  contents: write 
+  contents: write
 
 jobs:
   build:
@@ -15,46 +15,57 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Setup python
+    - name: Setup Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.12.7"
+        python-version: "3.12"
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install mlflow pandas numpy scikit-learn
+        pip install mlflow pandas numpy scikit-learn sqlite3-bro
 
-    - name: Run mlflow project
+    # ----------------------
+    # RUN MLFLOW PROJECT (SQLite BACKEND)
+    # ----------------------
+    - name: Run MLflow project
       env:
         MLFLOW_TRACKING_URI: "sqlite:///mlflow.db"
       run: |
         mlflow run MLProject --env-manager=local
 
-    - name: List mlruns (debug)
+    # ----------------------
+    # GET LATEST RUN ID
+    # ----------------------
+    - name: Get latest MLflow run_id
+      env:
+        MLFLOW_TRACKING_URI: "sqlite:///mlflow.db"
       run: |
-        echo "------------- mlruns directory --------------"
-        ls -R mlruns
+        RUN_ID=$(sqlite3 mlflow.db "SELECT run_uuid FROM runs ORDER BY start_time DESC LIMIT 1;")
+        echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
+        echo "Latest run_id: $RUN_ID"
 
-    - - name: Get latest run_id
-        env:
-          MLFLOW_TRACKING_URI: "sqlite:///mlflow.db"
-        run: |
-          RUN_ID=$(sqlite3 mlflow.db "SELECT run_uuid FROM runs ORDER BY start_time DESC LIMIT 1;")
-          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-          echo "Latest run_id: $RUN_ID"
-
-    - name: Commit & Push results
+    # ----------------------
+    # COMMIT DATABASE (OPTIONAL)
+    # ----------------------
+    - name: Commit & Push mlflow tracking DB
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add mlruns/
-        git commit -m "Upload artifact [skip ci]" || echo "No changes to commit"
+        git add mlflow.db
+        git commit -m "Update MLflow tracking DB [skip ci]" || echo "No changes"
         git push origin main
 
+    # ----------------------
+    # BUILD DOCKER MODEL
+    # ----------------------
     - name: Build Docker Model
+      env:
+        MLFLOW_TRACKING_URI: "sqlite:///mlflow.db"
       run: |
-        mlflow models build-docker --model-uri "runs:/$RUN_ID/model" --name "msml_insurance_model" 
+        mlflow models build-docker \
+          --model-uri "runs:/$RUN_ID/model" \
+          --name "msml_insurance_model"
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
@@ -65,7 +76,7 @@ jobs:
     - name: Tag Docker Image
       run: |
         docker tag msml_insurance_model ${{ secrets.DOCKER_HUB_USERNAME }}/msml_insurance_model:latest
-        
+
     - name: Push Docker Image
       run: |
         docker push ${{ secrets.DOCKER_HUB_USERNAME }}/msml_insurance_model:latest
