@@ -26,6 +26,8 @@ jobs:
         pip install mlflow pandas numpy scikit-learn
 
     - name: Run mlflow project
+      env:
+        MLFLOW_TRACKING_URI: "sqlite:///mlflow.db"
       run: |
         mlflow run MLProject --env-manager=local
 
@@ -34,11 +36,13 @@ jobs:
         echo "------------- mlruns directory --------------"
         ls -R mlruns
 
-    - name: Get latest MLflow run_id
-      run: |
-        RUN_ID=$(ls -td mlruns/0/*/ | grep -Eo '[0-9a-f]{32}' | head -n 1)
-        echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
-        echo "Latest run_id: $RUN_ID"
+    - - name: Get latest run_id
+        env:
+          MLFLOW_TRACKING_URI: "sqlite:///mlflow.db"
+        run: |
+          RUN_ID=$(sqlite3 mlflow.db "SELECT run_uuid FROM runs ORDER BY start_time DESC LIMIT 1;")
+          echo "RUN_ID=$RUN_ID" >> $GITHUB_ENV
+          echo "Latest run_id: $RUN_ID"
 
     - name: Commit & Push results
       run: |
