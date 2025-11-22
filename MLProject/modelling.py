@@ -2,15 +2,19 @@ import pandas as pd
 import argparse
 import mlflow
 import mlflow.sklearn
-import os
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, r2_score
+import os
 
 # =============== MLflow Tracking (SQLite) ===============
 mlflow.set_tracking_uri("sqlite:///mlflow.db")
-mlflow.set_experiment("insurance-experiment")
-mlflow.set_artifact_uri("file:./artifacts")
+
+# Membuat eksperimen jika belum ada
+experiment_name = "insurance-experiment"
+if mlflow.get_experiment_by_name(experiment_name) is None:
+    mlflow.create_experiment(experiment_name)
+mlflow.set_experiment(experiment_name)
 
 # Parse parameters for MLflow Project
 parser = argparse.ArgumentParser()
@@ -49,7 +53,7 @@ with mlflow.start_run():
     mlflow.log_metric("mse", mse)
     mlflow.log_metric("r2", r2)
 
-    # WAJIB: log model ke MLflow
+    # log model ke MLflow, artifact_path = "model"
     mlflow.sklearn.log_model(model, artifact_path="model")
 
     print("Training success. MSE:", mse, "R2:", r2)
