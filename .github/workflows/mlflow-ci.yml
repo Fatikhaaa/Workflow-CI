@@ -32,7 +32,7 @@ jobs:
       env:
         MLFLOW_TRACKING_URI: file:./mlruns
       run: |
-        python modelling.py
+        python MLProject/modelling.py
 
     # ----------------------
     # GET LATEST RUN ID
