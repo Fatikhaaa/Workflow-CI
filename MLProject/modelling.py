@@ -10,6 +10,7 @@ from sklearn.metrics import mean_squared_error, r2_score
 # =============== MLflow Tracking (SQLite) ===============
 mlflow.set_tracking_uri("sqlite:///mlflow.db")
 mlflow.set_experiment("insurance-experiment")
+mlflow.set_artifact_uri("file:./artifacts")
 
 # Parse parameters for MLflow Project
 parser = argparse.ArgumentParser()
