@@ -40,7 +40,12 @@ mlflow.sklearn.autolog()
 artifact_root = os.getenv("MLFLOW_ARTIFACT_URI", "./artifacts")
 os.makedirs(artifact_root, exist_ok=True)
 
-with mlflow.start_run():
+with mlflow.start_run() as run:
+    run_id = run.info.run_id
+    model_path = f"{artifact_root}/{run_id}/model"
+    os.makedirs(os.path.dirname(model_path), exist_ok=True)
+    
+
     model = RandomForestRegressor(
         n_estimators=args.n_estimators,
         max_depth=args.max_depth,
@@ -56,6 +61,6 @@ with mlflow.start_run():
     mlflow.log_metric("r2", r2)
 
     # log model ke MLflow, artifact_path="model" di dalam folder artifact_root
-    mlflow.sklearn.log_model(model, artifact_path="model")
+    mlflow.sklearn.log_model(model, artifact_path=model_path)
 
     print("Training success. MSE:", mse, "R2:", r2)
