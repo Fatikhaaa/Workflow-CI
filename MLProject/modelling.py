@@ -13,8 +13,8 @@ parser.add_argument("--max_depth", type=int, default=10)
 args = parser.parse_args()
 
 # Dataset path
-train_path = "insurance_preprocessing/insurance_train_preprocessed.csv"
-test_path = "insurance_preprocessing/insurance_test_preprocessed.csv"
+train_path = "MLProject/insurance_preprocessing/insurance_train_preprocessed.csv"
+test_path = "MLProject/insurance_preprocessing/insurance_test_preprocessed.csv"
 
 train_df = pd.read_csv(train_path)
 test_df = pd.read_csv(test_path)
