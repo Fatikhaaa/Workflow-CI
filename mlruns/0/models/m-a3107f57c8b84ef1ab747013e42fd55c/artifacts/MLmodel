@@ -1,0 +1,22 @@
+artifact_path: file:///home/runner/work/Workflow-CI/Workflow-CI/mlruns/0/models/m-a3107f57c8b84ef1ab747013e42fd55c/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.7
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.2
+mlflow_version: 3.6.0
+model_id: m-a3107f57c8b84ef1ab747013e42fd55c
+model_size_bytes: 8525877
+model_uuid: m-a3107f57c8b84ef1ab747013e42fd55c
+prompts: null
+run_id: 97c6efddd9174863a529ce325f810880
+utc_time_created: '2025-11-22 21:10:09.976207'
